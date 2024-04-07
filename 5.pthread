@@ -1,0 +1,84 @@
+#include <iostream>
+#include <cstdlib>
+#include <pthread.h>
+#include <ctime>
+
+using namespace std;
+
+const int SIZE = 4;
+const int NUM_THREADS = 4;
+
+int matrixA[SIZE][SIZE];
+int matrixB[SIZE][SIZE];
+int resultMatrix[SIZE][SIZE];
+
+// Structure for passing arguments to thread function
+struct ThreadArgs {
+    int threadID;
+};
+
+// Function to perform matrix multiplication for a portion of the matrix
+void* multiply(void* arg) {
+    ThreadArgs* args = (ThreadArgs*)arg;
+    int threadID = args->threadID;
+    int startRow = threadID * (SIZE / NUM_THREADS);
+    int endRow = (threadID + 1) * (SIZE / NUM_THREADS);
+
+    for (int i = startRow; i < endRow; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            resultMatrix[i][j] = 0;
+            for (int k = 0; k < SIZE; ++k) {
+                resultMatrix[i][j] += matrixA[i][k] * matrixB[k][j];
+            }
+        }
+    }
+
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t threads[NUM_THREADS];
+    ThreadArgs args[NUM_THREADS];
+
+    // Initialize matrices with random values
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            matrixA[i][j] = rand() % 10;
+            matrixB[i][j] = rand() % 10;
+        }
+    }
+
+    // Measure the start time
+    clock_t startTime = clock();
+
+    // Create threads
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        args[i].threadID = i;
+        pthread_create(&threads[i], NULL, multiply, (void*)&args[i]);
+    }
+
+    // Join threads
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        pthread_join(threads[i], NULL);
+    }
+
+    // Measure the end time
+    clock_t endTime = clock();
+
+    // Calculate execution time in milliseconds
+    double executionTimeMillisec = double(endTime - startTime) / (CLOCKS_PER_SEC / 1000);
+
+    // Print execution time
+    cout << "Execution time for matrix multiplication: " << executionTimeMillisec << " milliseconds" << endl;
+
+    // Print result matrix
+    cout << "Result Matrix:" << endl;
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            cout << resultMatrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}

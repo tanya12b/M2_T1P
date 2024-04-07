@@ -1,0 +1,91 @@
+#include <iostream>  // Include necessary libraries for input/output
+#include <fstream>   // File handling library
+#include <cstdlib>   // For standard library functions
+#include <ctime>     // For time functions
+
+using namespace std;
+
+// Function to perform matrix multiplication
+void multiplyMatrices(int **matrixA, int **matrixB, int **resultMatrix, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            resultMatrix[i][j] = 0;
+            for (int k = 0; k < size; ++k) {
+                resultMatrix[i][j] += matrixA[i][k] * matrixB[k][j];
+            }
+        }
+    }
+}
+
+// Function to print a matrix
+void printMatrix(int **matrix, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    // Set the size of the matrices
+    const int size = 4; // Size set to 4
+
+    // Initialize matrices MatrixA, MatrixB, and ResultMatrix with random values
+    int **MatrixA = new int*[size];
+    int **MatrixB = new int*[size];
+    int **ResultMatrix = new int*[size];
+
+    for (int i = 0; i < size; ++i) {
+        MatrixA[i] = new int[size];
+        MatrixB[i] = new int[size];
+        ResultMatrix[i] = new int[size];
+        for (int j = 0; j < size; ++j) {
+            MatrixA[i][j] = rand() % 10; // Assign random values between 0 and 9
+            MatrixB[i][j] = rand() % 10;
+        }
+    }
+
+    // Perform matrix multiplication
+    multiplyMatrices(MatrixA, MatrixB, ResultMatrix, size);
+
+    // Print matrices MatrixA, MatrixB, and ResultMatrix
+    cout << "Matrix A:" << endl;
+    printMatrix(MatrixA, size);
+    cout << endl;
+
+    cout << "Matrix B:" << endl;
+    printMatrix(MatrixB, size);
+    cout << endl;
+
+    cout << "Matrix C (Result of A * B):" << endl;
+    printMatrix(ResultMatrix, size);
+    cout << endl;
+
+    // Write the result matrix ResultMatrix to a file
+    ofstream outputFile("output.txt");
+    if (outputFile.is_open()) {
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                outputFile << ResultMatrix[i][j] << " ";
+            }
+            outputFile << endl;
+        }
+        outputFile.close();
+        cout << "Result in  output.txt" << endl;
+    } else {
+        cerr << "Sorry cant open the file." << endl;
+    }
+
+    // Deallocate memory
+    for (int i = 0; i < size; ++i) {
+        delete[] MatrixA[i];
+        delete[] MatrixB[i];
+        delete[] ResultMatrix[i];
+    }
+    delete[] MatrixA;
+    delete[] MatrixB;
+    delete[] ResultMatrix;
+
+    return 0;
+}

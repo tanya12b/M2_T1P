@@ -46,18 +46,17 @@ int main() {
         }
     }
 
-    // Measure execution time before matrix multiplication
+    // Measure the start time
     clock_t startTime = clock();
 
     // Perform matrix multiplication
     multiplyMatrices(MatrixA, MatrixB, ResultMatrix, size);
 
-    // Measure execution time after matrix multiplication
+    // Measure the end time
     clock_t endTime = clock();
-    double executionTime = double(endTime - startTime) / CLOCKS_PER_SEC;
 
-    // Print execution time
-    cout << "Matrix multiplication execution time: " << executionTime << " seconds" << endl;
+    // Calculate execution time in milliseconds
+    double executionTimeMillisec = double(endTime - startTime) / (CLOCKS_PER_SEC / 1000);
 
     // Print matrices MatrixA, MatrixB, and ResultMatrix
     cout << "Matrix A:" << endl;
@@ -72,6 +71,9 @@ int main() {
     printMatrix(ResultMatrix, size);
     cout << endl;
 
+    // Print execution time in milliseconds
+    cout << "Execution time for matrix multiplication: " << executionTimeMillisec << " milliseconds" << endl;
+
     // Write the result matrix ResultMatrix to a file
     ofstream outputFile("output.txt");
     if (outputFile.is_open()) {
@@ -82,9 +84,9 @@ int main() {
             outputFile << endl;
         }
         outputFile.close();
-        cout << "Result written to output.txt" << endl;
+        cout << "output.txt" << endl;
     } else {
-        cerr << "Unable to open output.txt for writing." << endl;
+        cerr << "srry cant open the file." << endl;
     }
 
     // Deallocate memory
